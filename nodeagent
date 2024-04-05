@@ -1,0 +1,28 @@
+                                                
+FROM jenkins/jenkins:lts
+
+USER root
+WORKDIR /app
+COPY . .
+run apt-get update
+run apt-get install -y build-essential
+RUN apt install npm -y
+ENV NODE_ENV production
+RUN apt-get update && \
+    apt-get install -y apt-transport-https ca-certificates curl gnupg lsb-release
+run  curl -fsSL https://download.docker.com/linux/ubuntu/gpg |   gpg --dearmor -o /usr/share/keyrings/docker-archive->
+
+ 
+RUN echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux>
+ 
+RUN apt-get update && \
+    apt-get install -y  docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+run  apt-get install systemctl -y
+RUN systemctl enable docker
+run usermod -aG docker jenkins
+run  apt-get install wget apt-transport-https gnupg lsb-release -y && \
+     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor |   tee /usr/share/keyrings/>
+     echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release >
+     apt-get update && \
+     apt-get install trivy -y
